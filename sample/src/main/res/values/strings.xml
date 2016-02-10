@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Infinite Marker Demo</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+        AIzaSyDkx0h97jU8xsq5Gfvrxb-adWvvn0MRJ_A
+    </string>
+</resources>
