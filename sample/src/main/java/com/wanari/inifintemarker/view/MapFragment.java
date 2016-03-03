@@ -1,17 +1,20 @@
 package com.wanari.inifintemarker.view;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.wanari.infinitemarker.HugeMapUtil;
+import com.wanari.infinitemarker.overlay.OverlayCalculationCallback;
+import com.wanari.inifintemarker.model.Constants;
 import com.wanari.inifintemarker.model.ContentManager;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class MapFragment extends SupportMapFragment implements OnMapReadyCallback {
+public class MapFragment extends SupportMapFragment implements OnMapReadyCallback, OverlayCalculationCallback {
 
     private HugeMapUtil hugeMapUtil;
 
@@ -26,13 +29,18 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
 
         try {
             hugeMapUtil = new HugeMapUtil.Builder(getContext())
+                    .setOverlayCalculationCallback(this)
                     .setMap(googleMap)
                     .build();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        ContentManager.getInstance().getRandomPositonsInHungary(500000)
+        getMarkerPositions();
+    }
+
+    private void getMarkerPositions() {
+        ContentManager.getInstance().getRandomPositonsInHungary(Constants.GENERATED_MARKER_COUNT)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(latLngWrappers -> {
@@ -40,5 +48,26 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
                         hugeMapUtil.setLatLngWrappers(latLngWrappers);
                     }
                 });
+    }
+
+    @Override
+    public void onOverlayCalculationStarted() {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).showLoader();
+        }
+    }
+
+    @Override
+    public void onOverlayCalculationFinished(int shownMarkerCount) {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).hideLoader();
+            ((MainActivity) getActivity()).updateShownMarkerCount(shownMarkerCount);
+        }
+    }
+
+    @Override
+    public void onOverlayCalculationError(Throwable throwable) {
+        Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
+        throwable.printStackTrace();
     }
 }

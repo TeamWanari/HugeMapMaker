@@ -45,6 +45,8 @@ public class OverlayFactory implements RenderParams {
     private LatLngBounds drawingBounds;
     private int calculatedHeight;
 
+    private int shownMarkerCount = 0;
+
     public OverlayFactory(Context context) {
         this.context = context;
     }
@@ -77,6 +79,7 @@ public class OverlayFactory implements RenderParams {
                     @Override
                     public void call(LatLngWrapper latLngWrapper) {
                         final LatLng latLng = latLngWrapper.getLatLng();
+                        shownMarkerCount++;
                         if (latLng.longitude > east) {
                             east = latLng.longitude;
                         }
@@ -118,5 +121,9 @@ public class OverlayFactory implements RenderParams {
     @Override
     public float getWidthInMeter() {
         return widthInMeters;
+    }
+
+    public int getShownMarkerCount() {
+        return shownMarkerCount;
     }
 }

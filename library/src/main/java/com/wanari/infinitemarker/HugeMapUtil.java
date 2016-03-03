@@ -135,7 +135,7 @@ public class HugeMapUtil implements GoogleMap.OnCameraChangeListener {
 
         if (latLngWrappers == null || latLngWrappers.size() == 0) {
             if (overlayCalculationCallback != null) {
-                overlayCalculationCallback.onOverlayCalculationFinished();
+                overlayCalculationCallback.onOverlayCalculationFinished(0);
             }
             return;
         }
@@ -156,7 +156,7 @@ public class HugeMapUtil implements GoogleMap.OnCameraChangeListener {
                                 actualOverlay = null;
                             }
                             if (overlayCalculationCallback != null) {
-                                overlayCalculationCallback.onOverlayCalculationFinished();
+                                overlayCalculationCallback.onOverlayCalculationFinished(overlayFactory.getShownMarkerCount());
                             }
                             if (mMap != null) {
                                 Log.i("HugeMapUtil", "Overlay added");
@@ -166,7 +166,7 @@ public class HugeMapUtil implements GoogleMap.OnCameraChangeListener {
                             throwable.printStackTrace();
                             if (overlayCalculationCallback != null) {
                                 overlayCalculationCallback.onOverlayCalculationError(throwable);
-                                overlayCalculationCallback.onOverlayCalculationFinished();
+                                overlayCalculationCallback.onOverlayCalculationFinished(0);
                             }
                         });
 

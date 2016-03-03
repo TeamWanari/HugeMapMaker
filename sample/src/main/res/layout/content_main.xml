@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,4 +14,27 @@
         android:layout_height="match_parent"
         android:tag="MapFragment" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/markerCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginRight="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_margin"
+        android:text="1000/1000000"
+        android:textColor="@color/colorAccent" />
+
+    <ProgressBar
+        android:id="@+id/mapLoader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_marginRight="@dimen/default_margin"
+        android:clickable="false"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+</FrameLayout>

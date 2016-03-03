@@ -5,4 +5,5 @@
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyDkx0h97jU8xsq5Gfvrxb-adWvvn0MRJ_A
     </string>
+    <string name="marker_counter" formatted="false">%d/%d</string>
 </resources>

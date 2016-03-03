@@ -7,7 +7,7 @@ public interface OverlayCalculationCallback {
 
     void onOverlayCalculationStarted();
 
-    void onOverlayCalculationFinished();
+    void onOverlayCalculationFinished(int shownMarkerCount);
 
     void onOverlayCalculationError(Throwable throwable);
 
