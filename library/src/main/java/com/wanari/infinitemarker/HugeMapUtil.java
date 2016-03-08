@@ -1,17 +1,24 @@
 package com.wanari.infinitemarker;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.GroundOverlay;
+import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.wanari.infinitemarker.data.LatLngWrapper;
 import com.wanari.infinitemarker.data.SimpleLatLng;
+import com.wanari.infinitemarker.opengl.GLRenderer;
+import com.wanari.infinitemarker.opengl.PixelBuffer;
 import com.wanari.infinitemarker.overlay.OverlayCalculationCallback;
 import com.wanari.infinitemarker.overlay.OverlayFactory;
+import com.wanari.infinitemarker.overlay.OverlayFactory2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +43,17 @@ public class HugeMapUtil implements GoogleMap.OnCameraChangeListener {
     private Subscription renderSubscription;
     private OverlayCalculationCallback overlayCalculationCallback;
 
+    private PixelBuffer pixelBuffer;
+    private GLRenderer glRenderer;
+
     private HugeMapUtil(Context context, GoogleMap map, ArrayList<LatLngWrapper> latLngWrappers, OverlayCalculationCallback overlayCalculationCallback, GoogleMap.OnCameraChangeListener onCameraChangeListener) {
         this.context = context;
         this.mMap = map;
         this.latLngWrappers = latLngWrappers;
         this.overlayCalculationCallback = overlayCalculationCallback;
         this.onCameraChangeListener = onCameraChangeListener;
-
         this.mMap.setOnCameraChangeListener(this);
+        glRenderer = new GLRenderer(context);
     }
 
     public static class Builder {
@@ -144,23 +154,39 @@ public class HugeMapUtil implements GoogleMap.OnCameraChangeListener {
             renderSubscription.unsubscribe();
         }
 
-        OverlayFactory overlayFactory = new OverlayFactory(context);
-
-        renderSubscription = overlayFactory.generateMapOverlay(mMap, latLngWrappers)
+        renderSubscription = OverlayFactory.prepareRenderParameters(latLngWrappers, mMap.getProjection().getVisibleRegion().latLngBounds)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        groundOverlayOptions -> {
+                        renderParameters -> {
+                            pixelBuffer = new PixelBuffer(renderParameters.getDrawingSize().x, renderParameters.getDrawingSize().y);
+                            glRenderer.setVertexList(renderParameters.getVertexList());
+                            pixelBuffer.setRenderer(glRenderer);
+
+                            Bitmap overlay = pixelBuffer.getBitmap();
+
+                            LatLngBounds drawingBounds = renderParameters.getDrawingBounds();
+                            if (drawingBounds == null) {
+                                drawingBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+                            }
+
+                            final GroundOverlayOptions options =
+                                    new GroundOverlayOptions()
+                                            .positionFromBounds(drawingBounds)
+                                            .image(BitmapDescriptorFactory.fromBitmap(overlay));
+
+                            overlay.recycle();
+
                             if (actualOverlay != null) {
                                 actualOverlay.remove();
                                 actualOverlay = null;
                             }
                             if (overlayCalculationCallback != null) {
-                                overlayCalculationCallback.onOverlayCalculationFinished(overlayFactory.getShownMarkerCount());
+                                overlayCalculationCallback.onOverlayCalculationFinished(renderParameters.getMarkerCount());
                             }
                             if (mMap != null) {
                                 Log.i("HugeMapUtil", "Overlay added");
-                                actualOverlay = mMap.addGroundOverlay(groundOverlayOptions);
+                                actualOverlay = mMap.addGroundOverlay(options);
                             }
                         }, throwable -> {
                             throwable.printStackTrace();
