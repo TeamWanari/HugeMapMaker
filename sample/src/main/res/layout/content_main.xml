@@ -24,7 +24,7 @@
         android:layout_marginRight="@dimen/default_margin"
         android:layout_marginTop="@dimen/default_margin"
         android:text="1000/1000000"
-        android:textColor="@color/colorAccent" />
+        android:textColor="@android:color/white" />
 
     <ProgressBar
         android:id="@+id/mapLoader"

@@ -26,9 +26,8 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         try {
-            hugeMapUtil = new HugeMapUtil.Builder(getContext())
+            hugeMapUtil = new HugeMapUtil.Builder(getActivity())
                     .setOverlayCalculationCallback(this)
                     .setMap(googleMap)
                     .build();
