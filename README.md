@@ -78,6 +78,7 @@ Credits: http://www.anddev.org/android-2d-3d-graphics-opengl-tutorials-f2/possib
  - Make markers customizable
 
  
+## License
 This software is licensed under the Apache 2 license, quoted below.
 
 Copyright 2016 Wanari, Inc.
