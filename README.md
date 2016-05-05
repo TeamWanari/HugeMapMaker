@@ -31,6 +31,13 @@ private void onReceivedMarkerPositions(List<LatLngWrapper> latLngWrappers){
 }
   ```
 
+And you have to register a Google Maps Key on your Google Dev Console and paste it into the strings.xml
+  ```xml
+	<string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+        >>PASTE_YOUR_GOOGLE_MAPS_KEY_HERE
+    </string>
+  ```	
+	
 The purpose of the article is to demonstrate a method on how to extend the capabilities of the Google Maps API on Android devices. Basically, Google Maps can render only a limited number of markers over the map, let’s say a few thousand, but with larger numbers it will start to lag and will ruin the user experience. The method demonstrated below will allow android projects to render a few tens to a hundred thousand markers (with limitations on the marker variety).
 
 ## More Than a Lot of Markers on Google Maps for Android
