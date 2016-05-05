@@ -25,6 +25,8 @@ import timber.log.Timber;
 /**
  * Created by agocs on 2016.01.20..
  */
+
+@Deprecated
 public class OverlayFactory2 implements RenderParams {
 
     public static final String TAG = "OverlayFactory";

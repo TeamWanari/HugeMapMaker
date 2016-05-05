@@ -16,6 +16,7 @@ import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Func0;
 import timber.log.Timber;
 
 public class OverlayFactory {
@@ -23,9 +24,9 @@ public class OverlayFactory {
     public static final int DEFAULT_WIDTH_PX = 600;
 
     public static Observable<RenderParameters> prepareRenderParameters(@NonNull List<? extends LatLngWrapper> latLngList, LatLngBounds visibleBounds) {
-        return Observable.create(new Observable.OnSubscribe<RenderParameters>() {
+        return Observable.defer(new Func0<Observable<RenderParameters>>() {
             @Override
-            public void call(Subscriber<? super RenderParameters> subscriber) {
+            public Observable<RenderParameters> call() {
                 Timber.i("Preparation started");
                 double south = Double.POSITIVE_INFINITY;
                 double west = Double.POSITIVE_INFINITY;
@@ -82,9 +83,8 @@ public class OverlayFactory {
 
                 renderParameters.setVertexList(glVertexList);
                 renderParameters.setDrawingSize(new Point(DEFAULT_WIDTH_PX, calculatedHeight));
-                subscriber.onNext(renderParameters);
                 Timber.i("Preparation finished");
-                subscriber.onCompleted();
+                return Observable.just(renderParameters);
             }
         });
     }

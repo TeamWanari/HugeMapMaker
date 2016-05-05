@@ -256,9 +256,6 @@ public class GLRenderer implements Renderer {
         // Our collection of vertices
         vertices = new float[MAX_VERTICES * 4 * 3];
 
-        Log.d("Size", "" + vertexList.size());
-        Log.d("Min", "" + run * MAX_VERTICES);
-        Log.d("Max", "" + (run + 1) * MAX_VERTICES);
         List<PointF> subList;
         if (run * MAX_VERTICES < vertexList.size()) {
             subList = vertexList.subList(run * MAX_VERTICES, (run + 1) * MAX_VERTICES < vertexList.size() ? (run + 1) * MAX_VERTICES : vertexList.size() - 1);
@@ -272,36 +269,38 @@ public class GLRenderer implements Renderer {
             float offset_y = pointF.y;
 
             // Create the 2D parts of our 3D vertices, others are default 0.0f
-            vertices[(i * 12) + 0] = offset_x;
-            vertices[(i * 12) + 1] = offset_y + (30.0f * ssu);
-            vertices[(i * 12) + 2] = 0f;
-            vertices[(i * 12) + 3] = offset_x;
-            vertices[(i * 12) + 4] = offset_y;
-            vertices[(i * 12) + 5] = 0f;
-            vertices[(i * 12) + 6] = offset_x + (30.0f * ssu);
-            vertices[(i * 12) + 7] = offset_y;
-            vertices[(i * 12) + 8] = 0f;
-            vertices[(i * 12) + 9] = offset_x + (30.0f * ssu);
-            vertices[(i * 12) + 10] = offset_y + (30.0f * ssu);
-            vertices[(i * 12) + 11] = 0f;
+            int pos = i * 12;
+            vertices[pos] = offset_x;
+            vertices[pos + 1] = offset_y + (30.0f * ssu);
+            vertices[pos + 2] = 0f;
+            vertices[pos + 3] = offset_x;
+            vertices[pos + 4] = offset_y;
+            vertices[pos + 5] = 0f;
+            vertices[pos + 6] = offset_x + (30.0f * ssu);
+            vertices[pos + 7] = offset_y;
+            vertices[pos + 8] = 0f;
+            vertices[pos + 9] = offset_x + (30.0f * ssu);
+            vertices[pos + 10] = offset_y + (30.0f * ssu);
+            vertices[pos + 11] = 0f;
         }
 
         // The indices for all textured quads
         indices = new short[MAX_VERTICES * 6];
-        int last = 0;
+        short last = 0;
         for (int i = 0; i < MAX_VERTICES; i++) {
             // We need to set the new indices for the new quad
-            indices[(i * 6) + 0] = (short) (last + 0);
-            indices[(i * 6) + 1] = (short) (last + 1);
-            indices[(i * 6) + 2] = (short) (last + 2);
-            indices[(i * 6) + 3] = (short) (last + 0);
-            indices[(i * 6) + 4] = (short) (last + 2);
-            indices[(i * 6) + 5] = (short) (last + 3);
+            int pos = i * 6;
+            indices[pos] = last;
+            indices[pos + 1] = (short) (last + 1);
+            indices[pos + 2] = (short) (last + 2);
+            indices[pos + 3] = last;
+            indices[pos + 4] = (short) (last + 2);
+            indices[pos + 5] = (short) (last + 3);
 
             // Our indices are connected to the vertices so we need to keep them
             // in the correct order.
             // normal quad = 0,1,2,0,2,3 so the next one will be 4,5,6,4,6,7
-            last = last + 4;
+            last = (short) (last + 4);
         }
 
         // The vertex buffer.
