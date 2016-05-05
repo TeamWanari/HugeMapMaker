@@ -3,7 +3,7 @@
     <string name="title_activity_main">Infinite Marker Demo</string>
 
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
-        AIzaSyDkx0h97jU8xsq5Gfvrxb-adWvvn0MRJ_A
+        >>PASTE_YOUR_GOOGLE_MAPS_KEY_HERE
     </string>
     <string name="marker_counter" formatted="false">%d/%d</string>
 </resources>
