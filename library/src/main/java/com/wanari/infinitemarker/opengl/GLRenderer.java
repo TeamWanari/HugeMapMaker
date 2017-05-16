@@ -1,6 +1,15 @@
 package com.wanari.infinitemarker.opengl;
 
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.PointF;
+import android.opengl.GLES20;
+import android.opengl.GLSurfaceView.Renderer;
+import android.opengl.GLUtils;
+import android.opengl.Matrix;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -10,17 +19,6 @@ import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.graphics.PointF;
-import android.opengl.GLES20;
-import android.opengl.GLUtils;
-import android.opengl.GLSurfaceView.Renderer;
-import android.opengl.Matrix;
-import android.util.Log;
 
 public class GLRenderer implements Renderer {
 
@@ -51,6 +49,7 @@ public class GLRenderer implements Renderer {
     long mLastTime;
 
     int run = 1;
+    private Bitmap markerBitmap;
 
     public GLRenderer(Context c) {
         mContext = c;
@@ -173,7 +172,7 @@ public class GLRenderer implements Renderer {
         // Create the triangles
         SetupTriangle();
         // Create the image information
-        SetupImage();
+        SetupImage(markerBitmap);
 
         // Set the clear color to black
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -192,7 +191,7 @@ public class GLRenderer implements Renderer {
         GLES20.glUseProgram(GraphicTools.sp_Image);
     }
 
-    public void SetupImage() {
+    public void SetupImage(Bitmap markerBitmap) {
         // Create our UV coordinates.
 
         uvs = new float[MAX_VERTICES * 4 * 2];
@@ -234,10 +233,7 @@ public class GLRenderer implements Renderer {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
 
         // Load the bitmap into the bound texture.
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bmp, 0);
-
-        // We are done using the bitmap so we should recycle it.
-        bmp.recycle();
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, markerBitmap, 0);
     }
 
     public void SetupTriangle() {
@@ -306,5 +302,9 @@ public class GLRenderer implements Renderer {
         drawListBuffer = dlb.asShortBuffer();
         drawListBuffer.put(indices);
         drawListBuffer.position(0);
+    }
+
+    public void setMarkerBitmap(Bitmap markerBitmap) {
+        this.markerBitmap = markerBitmap;
     }
 }

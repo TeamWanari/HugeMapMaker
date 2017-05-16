@@ -30,6 +30,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
             hugeMapUtil = new HugeMapUtil.Builder(getActivity())
                     .setOverlayCalculationCallback(this)
                     .setMap(googleMap)
+                    .setMarkerDrawable(com.wanari.infinitemarker.R.drawable.marker_blue)
                     .build();
         } catch (Exception e) {
             e.printStackTrace();
