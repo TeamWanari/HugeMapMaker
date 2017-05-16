@@ -2,7 +2,10 @@ package com.wanari.infinitemarker;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -18,7 +21,6 @@ import com.wanari.infinitemarker.opengl.GLRenderer;
 import com.wanari.infinitemarker.opengl.PixelBuffer;
 import com.wanari.infinitemarker.overlay.OverlayCalculationCallback;
 import com.wanari.infinitemarker.overlay.OverlayFactory;
-import com.wanari.infinitemarker.overlay.OverlayFactory2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +48,7 @@ public class HugeMapUtil implements GoogleMap.OnCameraChangeListener {
     private PixelBuffer pixelBuffer;
     private GLRenderer glRenderer;
 
-    private HugeMapUtil(Context context, GoogleMap map, ArrayList<LatLngWrapper> latLngWrappers, OverlayCalculationCallback overlayCalculationCallback, GoogleMap.OnCameraChangeListener onCameraChangeListener) {
+    private HugeMapUtil(Context context, GoogleMap map, ArrayList<LatLngWrapper> latLngWrappers, OverlayCalculationCallback overlayCalculationCallback, GoogleMap.OnCameraChangeListener onCameraChangeListener, int markerDrawable, Bitmap markerBitmap) {
         this.context = context;
         this.mMap = map;
         this.latLngWrappers = latLngWrappers;
@@ -54,6 +56,11 @@ public class HugeMapUtil implements GoogleMap.OnCameraChangeListener {
         this.onCameraChangeListener = onCameraChangeListener;
         this.mMap.setOnCameraChangeListener(this);
         glRenderer = new GLRenderer(context);
+        if (markerBitmap == null) {
+            glRenderer.setMarkerBitmap(BitmapFactory.decodeResource(context.getResources(), markerDrawable));
+        } else {
+            glRenderer.setMarkerBitmap(markerBitmap);
+        }
     }
 
     public static class Builder {
@@ -62,6 +69,8 @@ public class HugeMapUtil implements GoogleMap.OnCameraChangeListener {
         protected ArrayList<LatLngWrapper> latLngWrappers = new ArrayList<>();
         protected OverlayCalculationCallback overlayCalculationCallback;
         protected GoogleMap.OnCameraChangeListener onCameraChangeListener = null;
+        protected int markerDrawable = R.drawable.green_marker;
+        protected Bitmap markerBitmap = null;
 
         public Builder(Context context) {
             this.context = context;
@@ -94,6 +103,16 @@ public class HugeMapUtil implements GoogleMap.OnCameraChangeListener {
             return this;
         }
 
+        public Builder setMarkerDrawable(@DrawableRes int markerDrawable) {
+            this.markerDrawable = markerDrawable;
+            return this;
+        }
+
+        public Builder setMarkerBitmap(@NonNull Bitmap markerBitmap) {
+            this.markerBitmap = markerBitmap;
+            return this;
+        }
+
         public HugeMapUtil build() throws Exception {
             if (context == null) {
                 throw new Exception("No context specified for the builder.");
@@ -101,8 +120,16 @@ public class HugeMapUtil implements GoogleMap.OnCameraChangeListener {
             if (map == null) {
                 throw new Exception("Google Maps not ready.");
             }
-            return new HugeMapUtil(context, map, latLngWrappers, overlayCalculationCallback, onCameraChangeListener);
+            return new HugeMapUtil(context, map, latLngWrappers, overlayCalculationCallback, onCameraChangeListener, markerDrawable, markerBitmap);
         }
+    }
+
+    public void setMarkerBitmap(@NonNull Bitmap markerBitmap) {
+        glRenderer.SetupImage(markerBitmap);
+    }
+
+    public void setMarkerDrawable(@DrawableRes int markerDrawable) {
+        setMarkerBitmap(BitmapFactory.decodeResource(context.getResources(), markerDrawable));
     }
 
     public void setLatLngs(List<LatLng> latLngs) {

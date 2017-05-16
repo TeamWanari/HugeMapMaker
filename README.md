@@ -39,18 +39,18 @@ And you have to register a Google Maps Key on your Google Dev Console and paste 
   ```
 	
 
-The purpose of the article is to demonstrate a method on how to extend the capabilities of the Google Maps API on Android devices. Basically, Google Maps can render only a limited number of markers over the map, let�s say a few thousand, but with larger numbers it will start to lag and will ruin the user experience. The method demonstrated below will allow android projects to render a few tens to a hundred thousand markers (with limitations on the marker variety).
+The purpose of the article is to demonstrate a method on how to extend the capabilities of the Google Maps API on Android devices. Basically, Google Maps can render only a limited number of markers over the map, let's say a few thousand, but with larger numbers it will start to lag and will ruin the user experience. The method demonstrated below will allow android projects to render a few tens to a hundred thousand markers (with limitations on the marker variety).
 
 ## More Than a Lot of Markers on Google Maps for Android
 
 Source: https://developers.google.com/maps/articles/toomanymarkers#viewportmarkermanagement
-## The first approach � Ground Overlay with Bitmaps:
+## The first approach - Ground Overlay with Bitmaps:
 
 The first idea was to create a bitmap which covers the visible area of the map and draw the markers on it using the Canvas class. To avoid OutOfMemory errors, the size of bitmaps are limited. So rendering only a small piece of the map is possible at a given time. We used the Location class for distance measurements and Observables for easier thread handling of parallel tasks. This version worked well for a hundred thousand markers with the calculation time of less than one second. After some examination and tests, we noticed that the threads are spending most of their time with distance calculations, so we searched for an optimized algoritm for this estimate.
 
 ## Distance estimation
 
-After a few hours of research we found that the Haversine formula will give a really good estimate of the distance. The Haversine calculation proved to be SO MUCH FASTER than the SDK�s Location implementation.
+After a few hours of research we found that the Haversine formula will give a really good estimate of the distance. The Haversine calculation proved to be SO MUCH FASTER than the SDK's Location implementation.
 
 ### The simplified Haversine implementation:
 
@@ -72,9 +72,9 @@ public class PositionUtils {
 
 The next problematic part was the Canvas drawing. We ran a few tests and realized: if we have enough markers, drawing two or more bitmaps in parallel and merging them at the end is best. But this, of course, brings the memory issues back. All in all, the whole bitmap approach is prone to memory leaking and OutOfMemory problems.
 
-## Drawing fast � OpenGL ES 2.0
+## Drawing fast - OpenGL ES 2.0
 
-For speeding up the drawing, we saw that parallel processing is the best way to go. So the next approach uses the GPU and Open GL ES. The current implementation is somewhat of a hybrid, it doesn�t use a SurfaceView to show the markers, instead it renders the markers with the OpenGL API and reads the pixels out and converts them to a bitmap. Finally, it overlays the resulting bitmap the same way the previous approach did.
+For speeding up the drawing, we saw that parallel processing is the best way to go. So the next approach uses the GPU and Open GL ES. The current implementation is somewhat of a hybrid, it doesn't use a SurfaceView to show the markers, instead it renders the markers with the OpenGL API and reads the pixels out and converts them to a bitmap. Finally, it overlays the resulting bitmap the same way the previous approach did.
 
 Credits: http://www.anddev.org/android-2d-3d-graphics-opengl-tutorials-f2/possible-to-do-opengl-off-screen-rendering-in-android-t13232.html#p41662
 
