@@ -178,15 +178,6 @@ public class GLRenderer implements Renderer {
         // Set the clear color to black
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-//        // Create the shaders, solid color
-//        int vertexShader = GraphicTools.loadShader(GLES20.GL_VERTEX_SHADER, GraphicTools.vs_SolidColor);
-//        int fragmentShader = GraphicTools.loadShader(GLES20.GL_FRAGMENT_SHADER, GraphicTools.fs_SolidColor);
-//
-//        GraphicTools.sp_SolidColor = GLES20.glCreateProgram();             // create empty OpenGL ES Program
-//        GLES20.glAttachShader(GraphicTools.sp_SolidColor, vertexShader);   // add the vertex shader to program
-//        GLES20.glAttachShader(GraphicTools.sp_SolidColor, fragmentShader); // add the fragment shader to program
-//        GLES20.glLinkProgram(GraphicTools.sp_SolidColor);                  // creates OpenGL ES program executables
-
         // Create the shaders, images
         int vertexShader = GraphicTools.loadShader(GLES20.GL_VERTEX_SHADER, GraphicTools.vs_Image);
         int fragmentShader = GraphicTools.loadShader(GLES20.GL_FRAGMENT_SHADER, GraphicTools.fs_Image);
@@ -247,7 +238,6 @@ public class GLRenderer implements Renderer {
 
         // We are done using the bitmap so we should recycle it.
         bmp.recycle();
-
     }
 
     public void SetupTriangle() {
