@@ -55,7 +55,7 @@ public class OverlayFactory2 implements RenderParams {
         this.context = context;
     }
 
-    public Observable<OverlayFactory2> generateMapOverlay(@NonNull GoogleMap map, @NonNull List<? extends LatLngWrapper> latLngList) {
+    public Observable<OverlayFactory2> generateMapOverlay(@NonNull GoogleMap map, @NonNull List<LatLngWrapper> latLngList) {
         Log.i(TAG, "Unfiltered pos count: " + latLngList.size());
         return filterInBoundLatLng(latLngList, map.getProjection().getVisibleRegion().latLngBounds)
                 .doOnNext(new Action1<List<LatLngWrapper>>() {
@@ -96,27 +96,24 @@ public class OverlayFactory2 implements RenderParams {
                 });
     }
 
-    private Observable<List<LatLngWrapper>> filterInBoundLatLng(List<? extends LatLngWrapper> latLngList, LatLngBounds bounds) {
+    private Observable<List<LatLngWrapper>> filterInBoundLatLng(List<LatLngWrapper> latLngList, LatLngBounds bounds) {
         return Observable.from(latLngList)
                 .filter(new VisibleBoundFilter(bounds))
-                .doOnNext(new Action1<LatLngWrapper>() {
-                    @Override
-                    public void call(LatLngWrapper latLngWrapper) {
-                        final LatLng latLng = latLngWrapper.getLatLng();
-                        shownMarkerCount++;
-                        if (latLng.longitude > east) {
-                            east = latLng.longitude;
-                        }
-                        if (latLng.longitude < west) {
-                            west = latLng.longitude;
-                        }
+                .doOnNext(latLngWrapper -> {
+                    final LatLng latLng = latLngWrapper.getLatLng();
+                    shownMarkerCount++;
+                    if (latLng.longitude > east) {
+                        east = latLng.longitude;
+                    }
+                    if (latLng.longitude < west) {
+                        west = latLng.longitude;
+                    }
 
-                        if (latLng.latitude > north) {
-                            north = latLng.latitude;
-                        }
-                        if (latLng.latitude < south) {
-                            south = latLng.latitude;
-                        }
+                    if (latLng.latitude > north) {
+                        north = latLng.latitude;
+                    }
+                    if (latLng.latitude < south) {
+                        south = latLng.latitude;
                     }
                 })
                 .toList();
